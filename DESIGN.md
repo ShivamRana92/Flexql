@@ -1,5 +1,7 @@
 # FlexQL Design Document
 
+Github Repository : https://github.com/ShivamRana92/Flexql
+
 ## Overview
 
 FlexQL is a lightweight, persistent relational database engine implemented from scratch in C++17. It follows a client-server model over TCP and supports a subset of SQL including CREATE TABLE, INSERT, and SELECT with JOIN and WHERE clauses. The system is designed around three core principles: binary persistence, in-memory indexed access, and LRU query caching.
