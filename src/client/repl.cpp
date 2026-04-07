@@ -1,7 +1,3 @@
-/*
- * FlexQL Interactive REPL
- * Usage: ./flexql-client <host> <port>
- */
 #include "../../include/flexql.h"
 #include <iostream>
 #include <string>

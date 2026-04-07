@@ -62,13 +62,8 @@ bool Executor::evalCond(const Condition &cond,
     return false;
 }
 
-/* ------------------------------------------------------------------ */
-/*  CREATE TABLE — idempotent (silently skip if already exists)        */
-/*  This is what makes data persistence safe across server restarts.   */
-/* ------------------------------------------------------------------ */
 ExecResult Executor::execCreate(const CreateTableStmt &s) {
     if (storage_.tableExists(s.table_name)) {
-        /* Table already exists — treat as success (idempotent) */
         return {true, "", {}};
     }
     TableSchema schema;
@@ -81,9 +76,6 @@ ExecResult Executor::execCreate(const CreateTableStmt &s) {
     return {true, "", {}};
 }
 
-/* ------------------------------------------------------------------ */
-/*  INSERT                                                              */
-/* ------------------------------------------------------------------ */
 ExecResult Executor::execInsert(const InsertStmt &s) {
     Table *tbl=storage_.getTable(s.table_name);
     if (!tbl) return {false,"Table '"+s.table_name+"' does not exist",{}};
@@ -106,9 +98,6 @@ ExecResult Executor::execInsert(const InsertStmt &s) {
     return {true,"",{}};
 }
 
-/* ------------------------------------------------------------------ */
-/*  SELECT                                                              */
-/* ------------------------------------------------------------------ */
 ExecResult Executor::execSelect(const SelectStmt &s) {
     Table *tblA=storage_.getTable(s.table_name);
     if (!tblA) return {false,"Table '"+s.table_name+"' does not exist",{}};
@@ -126,7 +115,6 @@ ExecResult Executor::execSelect(const SelectStmt &s) {
         if (!err.empty()) return {false,err,{}};
     }
 
-    /* Build output column list */
     struct OutCol { std::string name; bool from_b; int idx; };
     std::vector<OutCol> out_cols;
 

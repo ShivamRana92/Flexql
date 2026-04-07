@@ -6,7 +6,6 @@
 #include <dirent.h>
 #include <algorithm>
 
-/* ---- binary helpers ---- */
 static void writeU8(std::vector<char> &b, uint8_t v)  { b.push_back((char)v); }
 static void writeU16(std::vector<char> &b, uint16_t v){ b.push_back(v&0xff); b.push_back((v>>8)&0xff); }
 static void writeDouble(std::vector<char> &b, double v){ char t[8]; memcpy(t,&v,8); for(int i=0;i<8;i++) b.push_back(t[i]); }
@@ -43,7 +42,6 @@ static bool readStr(const char *b, size_t bl, size_t &o, std::string &s) {
 
 static const char DATA_MAGIC[8] = {'F','L','X','D','A','T','1','0'};
 
-/* ================================================================== */
 StorageEngine::StorageEngine(const std::string &data_dir) : data_dir_(data_dir) {
     mkdir(data_dir_.c_str(), 0755);
 }
@@ -194,7 +192,6 @@ int StorageEngine::insertRows(const std::string &table_name,
 
     std::ofstream f(dataPath(table_name), std::ios::binary|std::ios::app);
     if (!f) { err="Cannot open data file"; return -1; }
-    /* Large write buffer for performance */
     f.rdbuf()->pubsetbuf(nullptr, 1<<20);
 
     int inserted=0;

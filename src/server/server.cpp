@@ -1,15 +1,3 @@
-/*
- * FlexQL Server — persistent, single-threaded TCP server
- *
- * Wire protocol:
- *   Client → Server : SQL text ending with ';'
- *   Server → Client :
- *     OK\nEND\n                            (non-SELECT success)
- *     ROW <n> <nl>:<name><vl>:<val>...\n  (one line per row)
- *     END\n
- *     ERROR: <msg>\nEND\n                 (on failure)
- */
-
 #include "parser.h"
 #include "storage.h"
 #include "cache.h"
@@ -32,7 +20,6 @@ static const int   BACKLOG  = 16;
 static const int   BUFSIZE  = 65536;
 static const char *DATA_DIR = "data/tables";
 
-/* ---- helpers ---- */
 static std::string formatRow(const ResultRow &row) {
     std::string s = "ROW ";
     s += std::to_string(row.col_names.size());
@@ -60,7 +47,6 @@ static bool sendAll(int sock, const std::string &data) {
 static void handleQuery(const std::string &sql, int client_sock,
                         Parser &parser, Executor &exec)
 {
-    /* Skip blank / whitespace-only statements */
     if (sql.find_first_not_of(" \t\r\n;") == std::string::npos) {
         sendAll(client_sock, "OK\nEND\n");
         return;
@@ -116,11 +102,6 @@ int main(int argc, char **argv) {
     (void)argc; (void)argv;
     signal(SIGPIPE, SIG_IGN);
 
-    /*
-     * NO wipe on startup — data in data/tables/ is persistent.
-     * Tables created in previous runs are loaded back into memory.
-     * CREATE TABLE is idempotent (silently skips if table exists).
-     */
     StorageEngine storage(DATA_DIR);
     storage.loadAll();
 
